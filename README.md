@@ -1,4 +1,4 @@
-# ScanPages
+# ScanPages v1
 ### Description
 Simple BASH script that can find pages from a domain without requiring a wordlist. It uses [THIS](https://raw.githubusercontent.com/emadshanab/WordLists-20111129/master/Directories_Common.wordlist) wordlist.
 
