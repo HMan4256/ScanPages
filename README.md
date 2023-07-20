@@ -20,8 +20,3 @@ Syntax:
 ```
 scanpages <URL>
 ```
-
-Example:
-```
-./scanpages https://google.com/
-```
