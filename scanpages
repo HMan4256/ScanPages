@@ -1,0 +1,61 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]
+then
+	echo "[!] Whoops... No argument were given..."
+ 	echo "Usage: scanpages <url> [flags]"
+	exit
+fi
+
+if [ "${1: -1}" == "/" ]
+then
+	url="${1:0:-1}"
+else
+	url="$1"
+fi
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+founded_pages=()
+
+function check_url() {
+	response=$(curl --head $url -s | head -n 1)
+	if [[ "$response" =~ "200" ]]
+	then
+		echo -e "${GREEN}$response${NC}"
+		founded_pages+=("$url")
+		return 0
+	elif [ -z "$response" ]
+	then
+		return 1
+	elif [[ ! "$response" =~ "200" ]] && [[ ! "$response" =~ "404" ]]
+	then
+		echo -e "${BLUE}$response${NC}"; return 0
+	else
+		echo -e "${RED}$response${NC}"; return 0
+	fi
+}
+
+if [[ -z "$(curl --head $url -s | head -n 1)" ]]; then echo "[!] Whoops... Page $url doesn't exist!"; exit; fi
+
+wordlist=$(wget https://raw.githubusercontent.com/emadshanab/WordLists-20111129/master/Directories_Common.wordlist -q -O -)
+
+for word in $wordlist
+do
+	#echo ${#founded_pages[@]}
+	echo "[*] $url/$word ... $(check_url $url/$word || exit $?)"	
+done
+
+if [ ${#founded_pages[@]} != 0 ]
+then
+	echo; echo -e "${GREEN}Found this pages:${NC}"
+	for page in founded_pages
+	do
+		echo $page
+	done
+else
+	echo; echo -e "${RED}No pages were found${NC}"
+fi
